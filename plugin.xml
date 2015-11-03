@@ -18,8 +18,8 @@
   </engines>
 
   <!-- JavaScrip Library Sources -->
-  <js-module src="www/chcp-localdev.js" name="chcp-localdev">
-      <clobbers target="chcp-localdev" />
+  <js-module src="www/chcpLocalDev.js" name="chcpLocalDev">
+      <clobbers target="chcpLocalDev" />
   </js-module>
 
   <platform name="ios">

@@ -11,7 +11,7 @@ var exec = require('cordova/exec'),
     INSTALL_UPDATE: 'jsInstallUpdate',
     CONFIGURE: 'jsConfigure',
     REQUEST_APP_UPDATE: 'jsRequestAppUpdate'
-  },
+  };
 
 // Called when Cordova is ready for work.
 // Here we will send default callback to the native side through which it will send to us different events.
@@ -30,6 +30,8 @@ function nativeCallback(msg) {
 
 }
 
+var chcpLocalDev = {
+  
+};
 
-
-module.exports = chcp-localdev;
+module.exports = chcpLocalDev;
