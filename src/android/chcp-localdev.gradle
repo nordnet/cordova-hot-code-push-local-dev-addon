@@ -1,0 +1,13 @@
+// Plugin configuration
+
+cdvPluginPostBuildExtras.add({
+
+    android.packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+
+    dependencies {
+        compile 'io.socket:socket.io-client:0.6.2'
+    }
+});

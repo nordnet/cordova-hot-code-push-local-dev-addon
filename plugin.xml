@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin id="cordova-hot-code-push-local-dev-addon" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0">
+
+  <name>Hot Code Push Local Development Addon</name>
+  <description>Cordova plugin that add's local development feature to the Hot Code Push plugin</description>
+  <license>Apache 2.0</license>
+  <keywords>cordova,code,update</keywords>
+
+  <repo>https://github.com/nordnet/cordova-hot-code-push-local-dev-addon</repo>
+  <issue>https://github.com/nordnet/cordova-hot-code-push-local-dev-addon/issues</issue>
+
+  <engines>
+    <engine name="cordova-ios" version=">=3.8"></engine>
+    <engine name="cordova-android" version=">=4"></engine>
+    <engine name="cordova-plugman" version=">=4.2.0"></engine>
+    <!-- needed for gradleReference support -->
+  </engines>
+
+  <!-- JavaScrip Library Sources -->
+  <js-module src="www/chcp-localdev.js" name="chcp-localdev">
+      <clobbers target="chcp-localdev" />
+  </js-module>
+
+  <platform name="ios">
+    <!-- swift activation hook -->
+    <hook src="scripts/swiftActivationHook.js" type="after_prepare"/>
+
+    <!-- Plugin inclusion in Cordova config.xml -->
+    <config-file parent="/*" target="config.xml">
+      <feature name="HotCodePushLocalDevMode">
+        <param name="ios-package" value="HCPLDPlugin"/>
+        <param name="onload" value="true"/>
+      </feature>
+    </config-file>
+
+    <!-- Plugin source code -->
+    <source-file src="src/ios/HCPLDPlugin.m"/>
+    <header-file src="src/ios/HCPLDPlugin.h"/>
+
+    <!-- Socket.IO sources -->
+    <source-file src="src/ios/SocketIOClientSwift/SocketAckEmitter.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketAckManager.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketAnyEvent.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketEngine.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketEngineClient.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketEnginePacketType.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketEngineSpec.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketEventHandler.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketFixUTF8.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketIOClient.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketIOClientOption.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketIOClientStatus.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketLogger.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketPacket.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketParser.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketStringReader.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketTypes.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SwiftRegex.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/WebSocket.swift" target-dir="SocketIOClientSwift/"/>
+
+  </platform>
+
+  <platform name="android">
+    <!-- Plugin inclusion in Cordova config.xml -->
+    <config-file parent="/*" target="res/xml/config.xml">
+      <feature name="HotCodePushLocalDevMode">
+        <param name="android-package" value="com.nordnetab.chcp.localdev.HotCodePushLocalDevPlugin"/>
+        <param name="onload" value="true"/>
+      </feature>
+    </config-file>
+
+    <!-- Gradle config -->
+    <framework custom="true" src="src/android/chcp-localdev.gradle" type="gradleReference"/>
+
+    <!-- sources for package: com.nordnetab.chcp -->
+    <source-file src="src/android/src/com/nordnetab/chcp/localdev/HotCodePushLocalDevPlugin.java" target-dir="src/com/nordnetab/chcp/localdev"/>
+
+  </platform>
+</plugin>
