@@ -2,7 +2,7 @@ package com.nordnetab.chcp.localdev;
 
 import android.util.Log;
 
-import com.nordnetab.chcp.main.config.ChcpXmlConfig;
+import com.nordnetab.chcp.localdev.config.ChcpXmlConfig;
 
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
