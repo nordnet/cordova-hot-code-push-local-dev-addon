@@ -18,8 +18,8 @@
   </engines>
 
   <!-- JavaScrip Library Sources -->
-  <js-module src="www/chcpLocalDev.js" name="chcpLocalDev">
-      <clobbers target="chcpLocalDev" />
+  <js-module name="chcpLocalDev" src="www/chcpLocalDev.js">
+    <clobbers target="chcpLocalDev"/>
   </js-module>
 
   <platform name="ios">
@@ -73,8 +73,14 @@
     <!-- Gradle config -->
     <framework custom="true" src="src/android/chcp-localdev.gradle" type="gradleReference"/>
 
-    <!-- sources for package: com.nordnetab.chcp -->
+    <!-- sources for package: com.nordnetab.chcp.localdev -->
     <source-file src="src/android/src/com/nordnetab/chcp/localdev/HotCodePushLocalDevPlugin.java" target-dir="src/com/nordnetab/chcp/localdev"/>
+
+    <!-- sources for package: com.nordnetab.chcp.localdev.config -->
+    <source-file src="src/android/src/com/nordnetab/chcp/localdev/config/ChcpXmlConfig.java" target-dir="src/com/nordnetab/chcp/localdev/config"/>
+    <source-file src="src/android/src/com/nordnetab/chcp/localdev/config/ChcpXmlConfigParser.java" target-dir="src/com/nordnetab/chcp/localdev/config"/>
+    <source-file src="src/android/src/com/nordnetab/chcp/localdev/config/DevelopmentOptions.java" target-dir="src/com/nordnetab/chcp/localdev/config"/>
+    <source-file src="src/android/src/com/nordnetab/chcp/localdev/config/XmlTags.java" target-dir="src/com/nordnetab/chcp/localdev/config"/>
 
   </platform>
 </plugin>
