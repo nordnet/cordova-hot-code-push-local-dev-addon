@@ -4,9 +4,13 @@ import android.util.Log;
 
 import com.nordnetab.chcp.localdev.config.ChcpXmlConfig;
 
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaArgs;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginResult;
+import org.json.JSONException;
 
 import java.net.URL;
 
@@ -15,7 +19,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 /**
- * Created by Nikolay Demyankov on 23.07.15.
+ * Created by Nikolay Demyankov on 03.11.15.
  * <p/>
  * Plugin main class.
  */
@@ -23,14 +27,33 @@ public class HotCodePushLocalDevPlugin extends CordovaPlugin {
 
     private Socket devSocket;
     private ChcpXmlConfig chcpXmlConfig;
+    private CallbackContext defaultCallback;
+    private boolean updateRequested;
 
-    // region Plugin lifecycle
+    private static final String JS_INIT_COMMAND = "jsInitPlugin";
+    private static final String NEW_RELEASE_SOCKET_EVENT = "release";
+
+    // region Plugin public methods
 
     @Override
     public void initialize(final CordovaInterface cordova, final CordovaWebView webView) {
         super.initialize(cordova, webView);
 
         parseCordovaConfigXml();
+    }
+
+    @Override
+    public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
+        if (!JS_INIT_COMMAND.equals(action)) {
+            return false;
+        }
+
+        defaultCallback = callbackContext;
+        if (updateRequested) {
+            fetchUpdate();
+        }
+
+        return true;
     }
 
     @Override
@@ -64,6 +87,21 @@ public class HotCodePushLocalDevPlugin extends CordovaPlugin {
         chcpXmlConfig = ChcpXmlConfig.loadFromCordovaConfig(cordova.getActivity());
     }
 
+    /**
+     * Fetch new update from the server.
+     * We will send request to the JS side, which will call appropriate JS module.
+     */
+    private void fetchUpdate() {
+        if (defaultCallback == null) {
+            return;
+        }
+        updateRequested = false;
+
+        PluginResult result = new PluginResult(PluginResult.Status.OK);
+        result.setKeepCallback(true);
+        defaultCallback.sendPluginResult(result);
+    }
+
     // endregion
 
     // region Local development socket
@@ -89,12 +127,13 @@ public class HotCodePushLocalDevPlugin extends CordovaPlugin {
                     Log.d("CHCP", "Socket connected");
                 }
 
-            }).on("release", new Emitter.Listener() {
+            }).on(NEW_RELEASE_SOCKET_EVENT, new Emitter.Listener() {
 
                 @Override
                 public void call(Object... args) {
                     Log.d("CHCP", "New Release is available");
-                    //fetchUpdate(null);
+                    updateRequested = true;
+                    fetchUpdate();
                 }
 
             }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
