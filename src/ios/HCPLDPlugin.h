@@ -12,4 +12,6 @@
  */
 @interface HCPLDPlugin : CDVPlugin
 
+- (void)jsInitPlugin:(CDVInvokedUrlCommand *)command;
+
 @end
