@@ -38,6 +38,19 @@
     <source-file src="src/ios/HCPLDPlugin.m"/>
     <header-file src="src/ios/HCPLDPlugin.h"/>
 
+    <!-- Config folder source code -->
+    <source-file src="src/ios/Config/HCPLDOptions.m" target-dir="Config/"/>
+    <header-file src="src/ios/Config/HCPLDOptions.h" target-dir="Config/"/>
+
+    <source-file src="src/ios/Config/HCPLDXmlConfig.m" target-dir="Config/"/>
+    <header-file src="src/ios/Config/HCPLDXmlConfig.h" target-dir="Config/"/>
+
+    <source-file src="src/ios/Config/HCPLDXmlConfigParser.m" target-dir="Config/"/>
+    <header-file src="src/ios/Config/HCPLDXmlConfigParser.h" target-dir="Config/"/>
+
+    <source-file src="src/ios/Config/HCPLDXmlTags.m" target-dir="Config/"/>
+    <header-file src="src/ios/Config/HCPLDXmlTags.h" target-dir="Config/"/>
+
     <!-- Socket.IO sources -->
     <source-file src="src/ios/SocketIOClientSwift/SocketAckEmitter.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketAckManager.swift" target-dir="SocketIOClientSwift/"/>
