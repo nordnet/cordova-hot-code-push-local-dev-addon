@@ -17,7 +17,9 @@ channel.onCordovaReady.subscribe(function() {
 
 /**
  * Method is called when native side detects new release and need to trigger the update.
+ *
+ * @param {String} message from the native side
  */
-function nativeCallback() {
+function nativeCallback(msg) {
   chcp.fetchUpdate();
 }
