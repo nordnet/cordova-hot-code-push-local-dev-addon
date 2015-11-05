@@ -2,6 +2,7 @@
 
   var path = require('path'),
     plist = require('plist'),
+    microtime = require('microtime'),
     fs = require('fs'),
     xmlHelper = require('./xmlHelper.js');
 
@@ -36,8 +37,7 @@
       return;
     }
 
-    var currentVer = manifestFileContent['manifest']['$']['android:versionCode'];
-    var newVersion = parseInt(currentVer) + 1;
+    var newVersion = parseInt(microtime.nowDouble());
     manifestFileContent['manifest']['$']['android:versionCode'] = newVersion.toString();
 
     xmlHelper.writeJsonAsXml(manifestFileContent, androidManifestFilePath);
@@ -56,7 +56,7 @@
     var pathToIosConfigPlist = path.join(cordovaContext.opts.projectRoot, 'platforms', 'ios', projectName, projectName + '-Info.plist');
 
     iosPlist = plist.parse(fs.readFileSync(pathToIosConfigPlist, 'utf8'));
-    var newVersion = parseInt(iosPlist['CFBundleVersion']) + 1;
+    var newVersion = parseInt(microtime.nowDouble());
     iosPlist['CFBundleVersion'] = newVersion.toString();
     iosPlist['CFBundleShortVersionString'] = newVersion.toString();
 
