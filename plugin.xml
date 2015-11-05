@@ -22,6 +22,9 @@
     <clobbers target="chcpLocalDev"/>
   </js-module>
 
+  <!-- Hooks -->
+  <hook type="after_prepare" src="scripts/afterPrepareHook.js" />
+
   <platform name="ios">
     <!-- swift activation hook -->
     <hook src="scripts/swiftActivationHook.js" type="after_prepare"/>
