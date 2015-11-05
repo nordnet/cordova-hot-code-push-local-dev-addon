@@ -15,8 +15,19 @@ var path = require('path'),
   iosPlatformPath;
 
 module.exports = function(ctx) {
+  logStart();
   enableSwiftSupport(ctx);
 };
+
+function logStart() {
+  console.log("Swift support activation hook:");
+}
+
+function printLog(msg) {
+  var formattedMsg = '    ' + msg;
+
+  console.log(formattedMsg);
+}
 
 /**
  * Enables Swift support.
@@ -107,9 +118,9 @@ function injectOptionsInProjectConfig(xcodeProject) {
       setProjectModuleName(buildSettings['PRODUCT_NAME']);
     }
   }
-  console.log('IOS project now has deployment target set as:[' + IOS_DEPLOYMENT_TARGET + '] ...');
-  console.log('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as:[YES] ...');
-  console.log('IOS project Runpath Search Paths set to: @executable_path/Frameworks ...');
+  printLog('IOS project now has deployment target set to: ' + IOS_DEPLOYMENT_TARGET);
+  printLog('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as: YES');
+  printLog('IOS project Runpath Search Paths set to: @executable_path/Frameworks');
 }
 
 /**
@@ -138,7 +149,7 @@ function injectSwiftHeader() {
       encoding: 'utf8'
     });
   } catch (err) {
-    console.log(err);
+    printLog(err);
     return;
   }
 
@@ -155,7 +166,7 @@ function injectSwiftHeader() {
     encoding: 'utf8'
   });
 
-  console.log('IOS project ' + swiftImportHeader + ' now contains import for Swift ');
+  printLog('IOS project ' + swiftImportHeader + ' now contains import for Swift ');
 }
 
 /**

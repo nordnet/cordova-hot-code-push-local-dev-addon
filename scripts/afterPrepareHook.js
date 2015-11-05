@@ -3,7 +3,20 @@ var fs = require('fs'),
   path = require('path'),
   chcpConfigXmlReader = require('./lib/chcpConfigXmlReader.js'),
   chcpConfigXmlWriter = require('./lib/chcpConfigXmlWriter.js'),
+  HOT_CODE_PUSH_PLUGIN_NAME = 'cordova-hot-code-push-plugin',
   RELEASE_BUILD_FLAG = '--release';
+
+function isChcpPluginInstalled(ctx) {
+  var pathToChcpPluginConfig = path.join(ctx.opts.projectRoot, 'plugins', HOT_CODE_PUSH_PLUGIN_NAME, 'plugin.xml'),
+    isInstalled = false;
+  try {
+    var pluginXmlContent = fs.readFileSync(pathToChcpPluginConfig);
+    isInstalled = true;
+  } catch(err) {
+  }
+
+  return isInstalled;
+}
 
 function isBuildingForRelease(ctx) {
   var consoleOptions = ctx.opts.options;
@@ -39,36 +52,60 @@ function getLocalServerURLFromEnvironmentConfig(ctx) {
   return null;
 };
 
-module.exports = function(ctx) {
+function isExecutionAllowed(ctx) {
+  if (!isChcpPluginInstalled(ctx)) {
+    printLog('WARNING! Hot Code Push plugin is not installed. Exiting.');
+    return false;
+  }
+
   if (isBuildingForRelease(ctx)) {
-    console.log('WARNING! You are building for release! Consider removing this plugin from your app beforing publishing it on the store.');
+    printLog('WARNING! You are building for release! Consider removing this plugin from your app beforing publishing it on the store.');
+    return false;
+  }
+
+  return true;
+}
+
+function logStart() {
+  console.log("CHCP Local Development Add-on:");
+}
+
+function printLog(msg) {
+  var formattedMsg = '    ' + msg;
+
+  console.log(formattedMsg);
+}
+
+module.exports = function(ctx) {
+  logStart();
+  if (!isExecutionAllowed(ctx)) {
     return;
   }
 
   var pluginPreferences = chcpConfigXmlReader.readOptions(ctx);
   if (!pluginPreferences) {
-    console.log('WARNING! Can\'t find config.xml! Exiting.');
+    printLog('WARNING! Can\'t find config.xml! Exiting.');
     return;
   }
 
   if (pluginPreferences['config-file'].length == 0) {
     pluginPreferences['local-development'].enabled = true;
-    console.log('Config-file is not set, enabling local-development mode.');
+    printLog('Config-file is not set, enabling local-development mode.');
   }
 
   if (!pluginPreferences['local-development'].enabled) {
-    console.log('Local development mode for CHCP plugin is disabled. Doing nothing.');
+    printLog('Local development mode for CHCP plugin is disabled. Doing nothing.');
     return;
   }
 
   var localServerURL = getLocalServerURLFromEnvironmentConfig(ctx);
   if (!localServerURL) {
-    console.log('Can\'t find .chcpenv config file with local server preferences. Did you run "cordova-hcp server"?');
+    printLog('Can\'t find .chcpenv config file with local server preferences. Did you run "cordova-hcp server"?');
     return;
   }
 
   pluginPreferences['config-file'] = localServerURL;
   chcpConfigXmlWriter.writeOptions(ctx, pluginPreferences);
 
-  console.log('Set config-file to local server: ' + localServerURL);
+  printLog('Setting config-file to local server: ' + localServerURL);
 };
