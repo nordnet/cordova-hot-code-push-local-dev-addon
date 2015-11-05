@@ -3,6 +3,7 @@ var fs = require('fs'),
   path = require('path'),
   chcpConfigXmlReader = require('./lib/chcpConfigXmlReader.js'),
   chcpConfigXmlWriter = require('./lib/chcpConfigXmlWriter.js'),
+  buildVersionUpdater = require('./lib/buildVersionUpdater.js'),
   HOT_CODE_PUSH_PLUGIN_NAME = 'cordova-hot-code-push-plugin',
   RELEASE_BUILD_FLAG = '--release';
 
@@ -108,4 +109,6 @@ module.exports = function(ctx) {
   chcpConfigXmlWriter.writeOptions(ctx, pluginPreferences);
 
   printLog('Setting config-file to local server: ' + localServerURL);
+
+  buildVersionUpdater.increaseBuildVersion(ctx);
 };
