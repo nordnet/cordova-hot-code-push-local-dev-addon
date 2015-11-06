@@ -6,6 +6,7 @@ We will use it to inject plugin-specific options.
 
   var path = require('path'),
     xmlHelper = require('./xmlHelper.js'),
+    logger = require('./logger.js'),
     cordovaContext,
     projectRoot,
     platforms;
@@ -117,7 +118,7 @@ We will use it to inject plugin-specific options.
       // read data from config.xml
       var configData = xmlHelper.readXmlAsJson(configXmlFilePath);
       if (configData == null) {
-        console.warn('Configuration file ' + configXmlFilePath + ' not found');
+        logger.error('Configuration file ' + configXmlFilePath + ' not found');
         return;
       }
 

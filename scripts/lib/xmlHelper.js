@@ -4,7 +4,8 @@ Small helper class to read/write from/to xml file.
 (function() {
 
   var fs = require('fs'),
-    xml2js = require('xml2js');
+    xml2js = require('xml2js'),
+    logger = require('./logger.js');
 
   module.exports = {
     readXmlAsJson: readXmlAsJson,
@@ -51,7 +52,7 @@ Small helper class to read/write from/to xml file.
     try {
       fs.writeFileSync(filePath, changedXmlData);
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       isSaved = false;
     }
 

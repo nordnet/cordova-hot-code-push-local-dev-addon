@@ -6,6 +6,7 @@ It will check all necessary module dependencies and install the missing ones loc
 var exec = require('child_process').exec,
   path = require('path'),
   fs = require('fs'),
+  logger = require('./lib/logger.js'),
   modules = ['read-package-json'],
   INSTALLATION_FLAG_FILE_NAME = '.installed',
   packageJsonFilePath;
@@ -19,7 +20,7 @@ function installModulesFromPackageJson() {
   var readJson = require('read-package-json');
   readJson(packageJsonFilePath, console.error, false, function(err, data) {
     if (err) {
-      printLog('Can\'t read package.json file: ' + err);
+      logger.error('Can\'t read package.json file: ' + err);
       return;
     }
 
@@ -29,7 +30,7 @@ function installModulesFromPackageJson() {
         modules.push(module);
       }
       installRequiredNodeModules(function() {
-        printLog('All dependency modules are installed.');
+        logger.info('All dependency modules are installed.');
       });
     }
   });
@@ -64,7 +65,7 @@ function installNodeModule(moduleName, callback) {
     callback(null);
     return;
   }
-  printLog('Can\'t find module ' + moduleName + ', running npm install');
+  logger.info('Can\'t find module ' + moduleName + ', running npm install');
 
   var cmd = 'npm install -D ' + moduleName;
   exec(cmd, function(err, stdout, stderr) {
@@ -84,26 +85,13 @@ function installRequiredNodeModules(callback) {
   var moduleName = modules.shift();
   installNodeModule(moduleName, function(err) {
     if (err) {
-      printLog('Failed to install module ' + moduleName + ':' + err);
+      logger.error('Failed to install module ' + moduleName + ':' + err);
       return;
     }
 
-    printLog('Module ' + moduleName + ' is installed');
+    logger.info('Module ' + moduleName + ' is installed');
     installRequiredNodeModules(callback);
   });
-}
-
-// endregion
-
-// region Logging
-
-function logStart() {
-  console.log('CHCP Local Dev add-on checking dependencies:');
-}
-
-function printLog(msg) {
-  var formattedMsg = '    ' + msg;
-  console.log(formattedMsg);
 }
 
 // endregion
@@ -155,7 +143,7 @@ module.exports = function(ctx) {
     return;
   }
 
-  logStart();
+  logger.header('CHCP Local Dev add-on checking dependencies:');
 
   init(ctx);
   installRequiredNodeModules(installModulesFromPackageJson);

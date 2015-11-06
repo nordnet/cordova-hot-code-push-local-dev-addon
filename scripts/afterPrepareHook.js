@@ -6,6 +6,7 @@ trigger the re-install of the assets folder.
 */
 var fs = require('fs'),
   path = require('path'),
+  logger = require('./lib/logger.js'),
   chcpConfigXmlReader = require('./lib/chcpConfigXmlReader.js'),
   chcpConfigXmlWriter = require('./lib/chcpConfigXmlWriter.js'),
   buildVersionUpdater = require('./lib/buildVersionUpdater.js'),
@@ -61,17 +62,17 @@ function isBuildingForRelease(ctx) {
  */
 function isExecutionAllowed(ctx, pluginPreferences) {
   if (!isChcpPluginInstalled(ctx)) {
-    printError('WARNING! Hot Code Push plugin is not installed. Exiting.');
+    logger.warn('Hot Code Push plugin is not installed. Doing nothing.');
     return false;
   }
 
   if (isBuildingForRelease(ctx)) {
-    printError('WARNING! You are building for release! Consider removing this plugin from your app beforing publishing it on the store.');
+    logger.warn('You are building for release! Consider removing this plugin from your app beforing publishing it on the store.');
     return false;
   }
 
   if (!pluginPreferences['local-development'].enabled) {
-    printLog('Local development mode for CHCP plugin is disabled. Doing nothing.');
+    logger.info('Local development mode for CHCP plugin is disabled. Doing nothing.');
     return false;
   }
 
@@ -117,47 +118,12 @@ function getLocalServerURLFromEnvironmentConfig(ctx) {
 
 // endregion
 
-// region Logging
-
-/**
- * Print header to indicate, the next messages is for this plugin.
- */
-function printStartHeader() {
-  console.log("CHCP Local Development Add-on:");
-}
-
-/**
- * Print error/warning message to the console.
- *
- * @param {String} msg - message to print
- */
-function printError(msg) {
-  printLog(msg, true);
-}
-
-/**
- * Print message to the console.
- *
- * @param {String} msg - message to print
- * @param {Boolean} isError - is this is an error message.
- */
-function printLog(msg, isError = false) {
-  var formattedMsg = '    ' + msg;
-  if (isError) {
-    console.warn(formattedMsg);
-  } else {
-    console.log(formattedMsg);
-  }
-}
-
-// endregion
-
 module.exports = function(ctx) {
-  printStartHeader();
+  logger.header('CHCP Local Development Add-on:');
 
   var pluginPreferences = chcpConfigXmlReader.readOptions(ctx);
   if (!pluginPreferences) {
-    printError('WARNING! Can\'t find config.xml! Exiting.');
+    logger.error('WARNING! Can\'t find config.xml! Exiting.');
     return;
   }
 
@@ -166,16 +132,16 @@ module.exports = function(ctx) {
   }
 
   if (pluginPreferences['config-file'].length == 0) {
-    printLog('Config-file is not set, local-development mode is enabled by default.');
+    logger.info('Config-file is not set, local-development mode is enabled by default.');
   }
 
   var localServerURL = getLocalServerURLFromEnvironmentConfig(ctx);
   if (!localServerURL) {
-    printError('Can\'t find .chcpenv config file with local server preferences. Did you run "cordova-hcp server"?');
+    logger.error('Can\'t find .chcpenv config file with local server preferences. Did you run "cordova-hcp server"?');
     return;
   }
 
-  printLog('Setting config-file to local server: ' + localServerURL);
+  logger.info('Setting config-file to local server: ' + localServerURL);
 
   pluginPreferences['config-file'] = localServerURL;
   chcpConfigXmlWriter.writeOptions(ctx, pluginPreferences);

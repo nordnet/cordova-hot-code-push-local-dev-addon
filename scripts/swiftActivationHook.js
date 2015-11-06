@@ -6,6 +6,7 @@ local development mode. And that library is written in Swift.
 
 var path = require('path'),
   fs = require('fs'),
+  logger = require('./lib/logger.js'),
   IOS_DEPLOYMENT_TARGET = '7.0',
   COMMENT_KEY = /_comment$/,
   context,
@@ -15,19 +16,9 @@ var path = require('path'),
   iosPlatformPath;
 
 module.exports = function(ctx) {
-  logStart();
+  logger.header('Swift support activation hook:');
   enableSwiftSupport(ctx);
 };
-
-function logStart() {
-  console.log("Swift support activation hook:");
-}
-
-function printLog(msg) {
-  var formattedMsg = '    ' + msg;
-
-  console.log(formattedMsg);
-}
 
 /**
  * Enables Swift support.
@@ -118,9 +109,9 @@ function injectOptionsInProjectConfig(xcodeProject) {
       setProjectModuleName(buildSettings['PRODUCT_NAME']);
     }
   }
-  printLog('IOS project now has deployment target set to: ' + IOS_DEPLOYMENT_TARGET);
-  printLog('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as: YES');
-  printLog('IOS project Runpath Search Paths set to: @executable_path/Frameworks');
+  logger.info('IOS project now has deployment target set to: ' + IOS_DEPLOYMENT_TARGET);
+  logger.info('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as: YES');
+  logger.info('IOS project Runpath Search Paths set to: @executable_path/Frameworks');
 }
 
 /**
@@ -149,7 +140,7 @@ function injectSwiftHeader() {
       encoding: 'utf8'
     });
   } catch (err) {
-    printLog(err);
+    logger.error(err);
     return;
   }
 
@@ -166,7 +157,7 @@ function injectSwiftHeader() {
     encoding: 'utf8'
   });
 
-  printLog('IOS project ' + swiftImportHeader + ' now contains import for Swift ');
+  logger.info('IOS project ' + swiftImportHeader + ' now contains import for Swift ');
 }
 
 /**

@@ -10,6 +10,7 @@ Otherwise - it will use the cached version.
     microtime = require('microtime'),
     fs = require('fs'),
     xmlHelper = require('./xmlHelper.js'),
+    logger = require('./logger.js'),
     IOS_PLATFORM = 'ios',
     ANDROID_PLATFORM = 'android';
 
@@ -59,7 +60,7 @@ Otherwise - it will use the cached version.
       manifestFileContent = xmlHelper.readXmlAsJson(androidManifestFilePath);
 
     if (!manifestFileContent) {
-      console.log('ERROR with android');
+      logger.error('ERROR with android');
       return;
     }
 
@@ -74,7 +75,7 @@ Otherwise - it will use the cached version.
       projectsConfigXml = xmlHelper.readXmlAsJson(projectsConfigXmlFilePath);
 
     if (!projectsConfigXml) {
-      console.log('Project\'s config.xml file is not found!');
+      logger.error('Project\'s config.xml file is not found!');
       return;
     }
 
