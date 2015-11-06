@@ -6,7 +6,6 @@ It will check all necessary module dependencies and install the missing ones loc
 var exec = require('child_process').exec,
   path = require('path'),
   fs = require('fs'),
-  logger = require('./lib/logger.js'),
   modules = ['read-package-json'],
   INSTALLATION_FLAG_FILE_NAME = '.installed',
   packageJsonFilePath;
@@ -20,7 +19,7 @@ function installModulesFromPackageJson() {
   var readJson = require('read-package-json');
   readJson(packageJsonFilePath, console.error, false, function(err, data) {
     if (err) {
-      logger.error('Can\'t read package.json file: ' + err);
+      printMsg('Can\'t read package.json file: ' + err);
       return;
     }
 
@@ -30,7 +29,7 @@ function installModulesFromPackageJson() {
         modules.push(module);
       }
       installRequiredNodeModules(function() {
-        logger.info('All dependency modules are installed.');
+        printMsg('All dependency modules are installed.');
       });
     }
   });
@@ -65,7 +64,7 @@ function installNodeModule(moduleName, callback) {
     callback(null);
     return;
   }
-  logger.info('Can\'t find module ' + moduleName + ', running npm install');
+  printMsg('Can\'t find module ' + moduleName + ', running npm install');
 
   var cmd = 'npm install -D ' + moduleName;
   exec(cmd, function(err, stdout, stderr) {
@@ -85,13 +84,25 @@ function installRequiredNodeModules(callback) {
   var moduleName = modules.shift();
   installNodeModule(moduleName, function(err) {
     if (err) {
-      logger.error('Failed to install module ' + moduleName + ':' + err);
+      printMsg('Failed to install module ' + moduleName + ':' + err);
       return;
     }
 
-    logger.info('Module ' + moduleName + ' is installed');
+    printMsg('Module ' + moduleName + ' is installed');
     installRequiredNodeModules(callback);
   });
+}
+
+// endregion
+
+// region Logging
+
+function printHeader(msg) {
+  console.log(msg);
+}
+
+function printMsg(msg) {
+  console.log('    ' + msg);
 }
 
 // endregion
@@ -143,7 +154,7 @@ module.exports = function(ctx) {
     return;
   }
 
-  logger.header('CHCP Local Dev add-on checking dependencies:');
+  printHeader('CHCP Local Dev add-on checking dependencies:');
 
   init(ctx);
   installRequiredNodeModules(installModulesFromPackageJson);
