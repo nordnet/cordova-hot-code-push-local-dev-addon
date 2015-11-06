@@ -12,7 +12,8 @@ Otherwise - it will use the cached version.
     xmlHelper = require('./xmlHelper.js'),
     logger = require('./logger.js'),
     IOS_PLATFORM = 'ios',
-    ANDROID_PLATFORM = 'android';
+    ANDROID_PLATFORM = 'android',
+    _iosPlistFile;
 
   module.exports = {
     increaseBuildVersion : increaseBuildVersion
@@ -48,7 +49,7 @@ Otherwise - it will use the cached version.
 
   // endregion
 
-  // region Private API
+  // region Android update
 
   /**
    * Increase value of the android:versionCode of the app.
@@ -60,38 +61,146 @@ Otherwise - it will use the cached version.
       manifestFileContent = xmlHelper.readXmlAsJson(androidManifestFilePath);
 
     if (!manifestFileContent) {
-      logger.error('ERROR with android');
+      logger.error('AndroidManifest.xml file is not found! Can\'t increase build version for android.');
       return;
     }
 
-    var newVersion = parseInt(microtime.nowDouble());
+    var currentVersion = parseInt(manifestFileContent['manifest']['$']['android:versionCode']),
+      newVersion = generateNewBuildVersion(currentVersion);
+
     manifestFileContent['manifest']['$']['android:versionCode'] = newVersion.toString();
 
-    xmlHelper.writeJsonAsXml(manifestFileContent, androidManifestFilePath);
+    var isUpdated = xmlHelper.writeJsonAsXml(manifestFileContent, androidManifestFilePath);
+    if (isUpdated) {
+      logger.info('Android version code is set to ' + newVersion);
+    }
   }
 
+  // endregion
+
+  // region iOS update
+
+  /**
+   * Increase CFBundleVersion of the app.
+   *
+   * @param {Object} cordovaContext - cordova context
+   */
   function increaseBuildVersionForIos(cordovaContext) {
+    var plistContent = readIosPlist(cordovaContext);
+    if (!plistContent) {
+      logger.error('Failed to read iOS project\'s plist file. Can\'t increase build version for iOS.');
+      return;
+    }
+
+    var currentVersion = parseInt(plistContent['CFBundleVersion']),
+      newVersion = generateNewBuildVersion(currentVersion);
+
+    plistContent['CFBundleVersion'] = newVersion.toString();
+    plistContent['CFBundleShortVersionString'] = newVersion.toString();
+
+    var isUpdated = updateIosPlist(cordovaContext, plistContent);
+    if (isUpdated) {
+      logger.info('iOS bundle version set to ' + newVersion);
+    }
+  }
+
+  /**
+   * Read iOS project's plist file.
+   * We need it to set new bundle version of the app.
+   *
+   * @param {Object} cordovaContext - cordova context
+   * @return {Object} plist file content as JSON object
+   */
+  function readIosPlist(cordovaContext) {
+    var pathToIosConfigPlist = pathToIosPlistFile(cordovaContext),
+      plistFileContent;
+
+    try {
+      plistFileContent = fs.readFileSync(pathToIosConfigPlist, 'utf8');
+    } catch (err) {
+      logger.error(err);
+      return null;
+    }
+
+    return plist.parse(plistFileContent);
+  }
+
+  /**
+   * Save new data to the plist file.
+   *
+   * @param {Object} cordovaContext - cordova context
+   * @param {Object} plistContent - new plist data
+   * @return {Boolean} true - if content is saved; otherwise - false
+   */
+  function updateIosPlist(cordovaContext, plistContent) {
+    var newPlist = plist.build(plistContent),
+      pathToPlistFile = pathToIosPlistFile(cordovaContext);
+
+    try {
+      fs.writeFileSync(pathToPlistFile, newPlist, 'utf8');
+    } catch (err) {
+      logger.error(err);
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Get file path to iOS plist.
+   *
+   * @param {Object} cordovaContext - cordova context
+   * @return {String} path to plist
+   */
+  function pathToIosPlistFile(cordovaContext) {
+    if (_iosPlistFile) {
+      return _iosPlistFile;
+    }
+
+    var projectName = getProjectName(cordovaContext);
+    if (!projectName) {
+      logger.error('Project\'s name is unknown. Can\'t increase build version for iOS.');
+      return null;
+    }
+
+    _iosPlistFile = path.join(cordovaContext.opts.projectRoot, 'platforms', IOS_PLATFORM, projectName, projectName + '-Info.plist');
+
+    return _iosPlistFile;
+  }
+
+  /**
+   * Get name of the project from the config.xml.
+   *
+   * @param {Object} cordovaContext - cordova context
+   * @return {String} name of the project
+   */
+  function getProjectName(cordovaContext) {
     var projectsConfigXmlFilePath = path.join(cordovaContext.opts.projectRoot, 'config.xml'),
       projectsConfigXml = xmlHelper.readXmlAsJson(projectsConfigXmlFilePath);
 
     if (!projectsConfigXml) {
       logger.error('Project\'s config.xml file is not found!');
-      return;
+      return null;
     }
 
-    var projectName = projectsConfigXml['widget']['name'][0];
-
-    var pathToIosConfigPlist = path.join(cordovaContext.opts.projectRoot, 'platforms', IOS_PLATFORM, projectName, projectName + '-Info.plist');
-
-    iosPlist = plist.parse(fs.readFileSync(pathToIosConfigPlist, 'utf8'));
-    var newVersion = parseInt(microtime.nowDouble());
-    iosPlist['CFBundleVersion'] = newVersion.toString();
-    iosPlist['CFBundleShortVersionString'] = newVersion.toString();
-
-    var newPlist = plist.build(iosPlist);
-    fs.writeFileSync(pathToIosConfigPlist, newPlist, 'utf8');
+    return projectsConfigXml['widget']['name'][0];
   }
 
   // endregion
+
+  /**
+   * Generate new build version number of the app.
+   *
+   * @param {Integer} currentVersion - current version of the app
+   * @return {Integer} new build version number
+   */
+  function generateNewBuildVersion(currentVersion) {
+    var newVersion = parseInt(microtime.nowDouble());
+    if (currentVersion > newVersion) {
+      return currentVersion+1;
+    } else {
+      return newVersion;
+    }
+  }
 
 })();

@@ -43,7 +43,7 @@ Helper class to read plugin-specific options from the config.xml.
       parsedData = {
         'config-file': '',
         'local-development': {
-          enabled: false
+          enabled: true
         }
       };
 
@@ -55,13 +55,12 @@ Helper class to read plugin-specific options from the config.xml.
     var chcpContent = rootContent.chcp[0];
     if (chcpContent['config-file']) {
       parsedData['config-file'] = chcpContent['config-file'][0]['$']['url'];
-    } else {
-      // if config-file is not set then enable local-development by default
-      parsedData['local-development'].enabled = true;
     }
 
     if (chcpContent['local-development']) {
       parsedData['local-development'].enabled = (chcpContent['local-development'][0]['$']['enabled'] === 'true');
+    } else {
+      parsedData['local-development'].enabled = false;
     }
 
     return parsedData;
