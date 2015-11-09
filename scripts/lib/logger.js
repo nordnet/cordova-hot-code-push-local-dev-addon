@@ -23,7 +23,8 @@ Small logger for plugin hooks.
    * @param {String} msg - header message
    */
   function header(msg) {
-    console.log(colors.underline(msg));
+    var message = colors.underline(msg);
+    console.log(message);
   }
 
   /**
@@ -33,7 +34,8 @@ Small logger for plugin hooks.
    * @param {String} msg - message to print
    */
   function info(msg) {
-    console.log(formatMessage(msg));
+    var message = formatMessage(msg);
+    console.log(message);
   }
 
   /**
@@ -42,8 +44,8 @@ Small logger for plugin hooks.
    * @param {String} msg - message to print
    */
   function error(msg) {
-    var formattedMsg = formatMessage(msg),
-      coloredMsg = colors.red(formatMessage);
+    var message = formatMessage(msg),
+      coloredMsg = colors.red(message);
 
     console.log(coloredMsg);
   }
@@ -54,8 +56,8 @@ Small logger for plugin hooks.
    * @param {String} msg - message to print
    */
   function warn(msg) {
-    var formattedMsg = formatMessage(msg),
-      coloredMsg = colors.yellow(formattedMsg);
+    var message = formatMessage(msg),
+      coloredMsg = colors.yellow(message);
 
     console.log(coloredMsg);
   }
@@ -66,8 +68,8 @@ Small logger for plugin hooks.
    * @param {String} msg - message to print
    */
   function success(msg) {
-    var formattedMsg = formatMessage(msg),
-      coloredMsg = colors.green(formattedMsg);
+    var message = formatMessage(msg),
+      coloredMsg = colors.green(message);
 
     console.log(coloredMsg);
   }
