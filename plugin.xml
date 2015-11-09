@@ -28,7 +28,8 @@
 
   <platform name="ios">
     <!-- swift activation hook -->
-    <hook src="scripts/swiftActivationHook.js" type="after_prepare"/>
+    <hook src="scripts/ios_swiftActivationHook.js" type="after_prepare"/>
+    <hook src="scripts/ios_swiftDeactivationHook.js" type="before_plugin_uninstall" />
 
     <!-- Plugin inclusion in Cordova config.xml -->
     <config-file parent="/*" target="config.xml">
