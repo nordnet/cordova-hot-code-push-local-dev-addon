@@ -1,6 +1,6 @@
 # Cordova Hot Code Push Local Development Add-on
 
-Cordova plugin that adds local development feature to the [Hot Code Push plugin](https://github.com/nordnet/cordova-hot-code-push). With it you can develop your app and see the result immediately on the device. No need to restart it on every change you make in your web files. All the updates are uploaded automatically.
+Cordova plugin that adds local development feature to the [Hot Code Push plugin](https://github.com/nordnet/cordova-hot-code-push). With it you can develop your app and see the result immediately on the device. No need to restart it on every change you make in your web files: all the updates are uploaded automatically.
 
 ## Supported platforms
 - Android 4.0.0 or above.
@@ -163,8 +163,21 @@ On each new build plugin will increase build version of the app, so the Hot Code
 
 When development is done and you are ready for release - don't forget to delete this plugin. It's not gonna work in the release mode anyway.
 
-### How it works
+### Configuration
 
+If you just started a new project and didn't define `config-file` in the `config.xml` - then you don't need to do any configuration. You just need to launch the local server by executing `cordova-hcp server`, and the plugin will set `config-file` to it automatically in the platform-specific `config.xml`. That is why there is nothing about `config-file` in the quick start guides.
+
+But if your `config.xml` already has a `config-file` - then you need to explicitly activate plugin in the app like so:
+```xml
+<chcp>
+  <config-file url="http://mydomain.com/chcp.json" />
+  <local-development enabled="true" />
+</chcp>
+```
+
+As you can see, you just need to add `<local-development />` preference to the `<chcp />` block and set `enabled` to `true`. If it set to `false` - plugin is disabled.
+
+If enabled and local server is running - plugin will take it's url and inject it as a `config-file` in the platform-specific `config.xml`. As a result, your app will be configured to work with the local server.
 
 ### How to uninstall
 
