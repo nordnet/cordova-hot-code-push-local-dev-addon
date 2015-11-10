@@ -26,7 +26,7 @@ It is also possible to install via repo url directly (__unstable__)
     cordova plugin add https://github.com/nordnet/cordova-hot-code-push-local-dev-addon.git
 ```
 
-**Note:** you can install plugin to any project, but it is not gonna work without the Hot Code Push plugin. Although, it is not gonna crash your app.
+**Note:** you can install plugin to any project, but it is not gonna do anything without the Hot Code Push plugin.
 
 ### Quick start guide for Cordova project
 
