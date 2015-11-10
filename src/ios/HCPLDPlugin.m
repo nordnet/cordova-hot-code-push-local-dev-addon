@@ -14,16 +14,24 @@
     HCPLDXmlConfig *_pluginXmllConfig;
     NSString *_defaultCallback;
     BOOL _updateRequested;
+    BOOL _isChcpInstalled;
 }
 @end
 
 static NSString *const NEW_RELEASE_EVENT = @"release";
+static NSString *const HOT_CODE_PUSH_PLUGIN = @"HCPPlugin";
 
 @implementation HCPLDPlugin
 
 #pragma mark Lifecycle
 
 -(void)pluginInitialize {
+    // if Hot Code Push plugin is not installed - do nothing
+    _isChcpInstalled = [self isHotCodePushPluginInstalled];
+    if (!_isChcpInstalled) {
+        return;
+    }
+    
     [self parseCordovaConfig];
     [self connectToDevServer];
 }
@@ -42,6 +50,10 @@ static NSString *const NEW_RELEASE_EVENT = @"release";
 }
 
 #pragma mark Private API
+
+- (BOOL)isHotCodePushPluginInstalled {
+    return NSClassFromString(HOT_CODE_PUSH_PLUGIN) != nil;
+}
 
 - (void)parseCordovaConfig {
     _pluginXmllConfig = [HCPLDXmlConfig loadFromCordovaConfigXml];
