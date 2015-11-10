@@ -29,9 +29,11 @@ public class HotCodePushLocalDevPlugin extends CordovaPlugin {
     private ChcpXmlConfig chcpXmlConfig;
     private CallbackContext defaultCallback;
     private boolean updateRequested;
+    private boolean isChcpPluginInstalled;
 
     private static final String JS_INIT_COMMAND = "jsInitPlugin";
     private static final String NEW_RELEASE_SOCKET_EVENT = "release";
+    private static final String HOT_CODE_PUSH_PLUGIN = "com.nordnetab.chcp.main.HotCodePushPlugin";
 
     // region Plugin public methods
 
@@ -39,7 +41,11 @@ public class HotCodePushLocalDevPlugin extends CordovaPlugin {
     public void initialize(final CordovaInterface cordova, final CordovaWebView webView) {
         super.initialize(cordova, webView);
 
-        parseCordovaConfigXml();
+        // parse config only if main plugin is installed
+        isChcpPluginInstalled = isHotCodePushPluginIsInstalled();
+        if (isChcpPluginInstalled) {
+            parseCordovaConfigXml();
+        }
     }
 
     @Override
@@ -73,6 +79,23 @@ public class HotCodePushLocalDevPlugin extends CordovaPlugin {
     // endregion
 
     // region Private API
+
+    /**
+     * Check if Hot Code Push plugin is installed.
+     * If not - there is no point in working.
+     *
+     * @return <code>true</code> - plugin is installed; otherwise - <code>false</code>
+     */
+    private boolean isHotCodePushPluginIsInstalled() {
+        try {
+            Class.forName(HOT_CODE_PUSH_PLUGIN);
+        } catch(ClassNotFoundException e) {
+            Log.w("CHCP", "Hot Code Push Plugin is not installed! Local development add-on is not gonna work.");
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Read hot-code-push plugin preferences from cordova config.xml
@@ -111,7 +134,7 @@ public class HotCodePushLocalDevPlugin extends CordovaPlugin {
      * Called only when local development mode is enabled in config.xml
      */
     private void connectToLocalDevSocket() {
-        if (!chcpXmlConfig.getDevelopmentOptions().isEnabled()) {
+        if (!isChcpPluginInstalled || !chcpXmlConfig.getDevelopmentOptions().isEnabled()) {
             return;
         }
 
