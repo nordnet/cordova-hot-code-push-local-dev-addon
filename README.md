@@ -234,4 +234,8 @@ To remove the plugin just execute:
 cordova plugin remove cordova-hot-code-push-local-dev-addon
 ```
 
-As a result, it will delete all plugin's files. In the case of the iOS it will also disable Swift support in the project's config by setting `Embedded Content Contains Swift Code` preference to `NO`.
+As a result, it will delete all plugin's files. In the case of the iOS it will also disable Swift support in the project's config by setting `Embedded Content Contains Swift Code` preference to `NO`:
+```
+CHCP Local Dev plugin cleanup:
+    IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as: NO
+```
