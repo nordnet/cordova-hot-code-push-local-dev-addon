@@ -1,6 +1,6 @@
 # Cordova Hot Code Push Local Development Add-on
 
-Cordova plugin that adds local development feature to the [Hot Code Push plugin](https://github.com/nordnet/cordova-hot-code-push). With it you can develop your app and see the result immediately on the device. No need to restart it on every change you make in your web files: all the updates are uploaded automatically.
+This plugin adds local development feature to the [Hot Code Push plugin](https://github.com/nordnet/cordova-hot-code-push). With it you can develop your app and see the result immediately on the device. No need to restart it on every change you make in your web files: all the updates are uploaded automatically.
 
 ## Supported platforms
 - Android 4.0.0 or above.
@@ -16,17 +16,17 @@ Cordova plugin that adds local development feature to the [Hot Code Push plugin]
 - [How to uninstall](#how-to-uninstall)
 
 ### Installation
-This requires cordova 5.0+ (current stable 0.1)
+This requires cordova 5.0+ (current stable 0.1):
 ```sh
-    cordova plugin add cordova-hot-code-push-local-dev-addon
+cordova plugin add cordova-hot-code-push-local-dev-addon
 ```
 
-It is also possible to install via repo url directly (__unstable__)
+It is also possible to install via repo url directly (__unstable__):
 ```sh
-    cordova plugin add https://github.com/nordnet/cordova-hot-code-push-local-dev-addon.git
+cordova plugin add https://github.com/nordnet/cordova-hot-code-push-local-dev-addon.git
 ```
 
-**Note:** you can install plugin to any project, but it is not gonna do anything without the Hot Code Push plugin.
+**Note:** you can install plugin to any project, but it is not gonna do anything without the [Hot Code Push plugin](https://github.com/nordnet/cordova-hot-code-push).
 
 ### Quick start guide for Cordova project
 
@@ -156,7 +156,7 @@ From this point you can do local development, where all the changes are uploaded
 
 ### Configuration
 
-If you just started a new project and didn't define `config-file` in the `config.xml` - then you don't need to do any configuration. You just need to launch the local server by executing `cordova-hcp server`, and the plugin will set `config-file` to it automatically in the platform-specific `config.xml`. That is why there is nothing about `config-file` in the quick start guides.
+If you just started a new project or didn't define `config-file` in the `config.xml` - then you don't need to do any configuration. You just need to launch the local server by executing `cordova-hcp server`, and the plugin will handle the rest.
 
 But if your `config.xml` already has a `config-file` - then you need to explicitly activate plugin in the app like so:
 ```xml
@@ -177,7 +177,7 @@ Plugin does his work on two stages:
 1. When the project is build (`cordova build` or `cordova run`).
 2. When the app is running.
 
-#### Build phase
+##### Build phase
 
 When you execute `cordova build` plugin:
 
@@ -198,7 +198,7 @@ Swift support activation hook:
     Injected swift header HelloCordova-Swift.h into plugin's main header.
 ```
 
-#### App is running
+##### App is running
 
 When the app launches - plugin tries to connect to the local server's socket. Thru that socket we will receive notifications from the server, that new release is ready for upload:
 ```
@@ -212,7 +212,7 @@ As long as you work on your web project - there is no need to restart the app. T
 
 ### When to use this plugin
 
-You should use this plugin for development purpose only. It will help you to speed up the development, and nothing more. When the app is ready and you are prepared for release - don't forget to delete this plugin. It's not gonna work in the release mode anyway. Plus, if you'll try to publish iOS version of the app with this plugin - there is a good chance that it will be rejected because of the Swift code. For some reason when you build your app from console - in the result archive there is no `SwiftSupport` folder. And because of that you will be rejected with the message:
+You should use this plugin for development purpose only. It will help you to speed up the development, and nothing more. When the app is ready and you are prepared for release - don't forget to delete it. It's not gonna work in the release mode anyway. Plus, if you'll try to publish iOS version of the app with this plugin - there is a good chance that it will be rejected because of the Swift code. For some reason when you build your app from console - in the result archive there is no `SwiftSupport` folder. And because of that you will be rejected with the message:
 ```
 Dear developer,
 
@@ -228,11 +228,6 @@ The App Store team
 ```
 
 ### How to uninstall
-
-You should remove this plugin from the app when development is done. And there are two reasons for that:
-
-1. Plugin connects to the local server via socket. And since in release version there is no local server - you don't need this unused code.
-2. In the case of the iOS it uses Socket.IO library, which is written in the Swift. And if you will try to publish your app with it - it can be rejected. And you don't want that.
 
 To remove the plugin just execute:
 ```sh
