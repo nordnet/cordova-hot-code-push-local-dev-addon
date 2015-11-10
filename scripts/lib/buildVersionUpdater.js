@@ -7,7 +7,6 @@ Otherwise - it will use the cached version.
 
   var path = require('path'),
     plist = require('plist'),
-    microtime = require('microtime'),
     fs = require('fs'),
     xmlHelper = require('./xmlHelper.js'),
     logger = require('./logger.js'),

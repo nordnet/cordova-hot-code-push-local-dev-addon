@@ -41,7 +41,6 @@
   "dependencies": {
     "xml2js": ">=0.4",
     "plist": ">=1.1.0",
-    "microtime": ">=2.0.0",
     "colors": ">=1.1.2"
   },
   "author": "Nikolay Demyankov for Nordnet Bank AB",
