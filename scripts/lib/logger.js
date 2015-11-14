@@ -4,7 +4,7 @@ Small logger for plugin hooks.
 
 (function() {
 
-  var colors = require('colors/safe'),
+  var colors = require('colors'),
     MESSAGES_PREFIX = '    ';
 
   module.exports = {
