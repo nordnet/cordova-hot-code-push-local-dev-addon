@@ -28,6 +28,7 @@ Mainly, it has only two method: to activate and to deactivate swift support in t
    * @param {Object} cordovaContext - cordova context
    */
   function activate(cordovaContext) {
+
     init(cordovaContext);
 
     // injecting options in project file
@@ -98,11 +99,18 @@ Mainly, it has only two method: to activate and to deactivate swift support in t
    */
   function getProjectName(ctx, projectRoot) {
     var cordova_util = ctx.requireCordovaModule('cordova-lib/src/cordova/util'),
-      ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
       xml = cordova_util.projectConfig(projectRoot),
-      cfg = new ConfigParser(xml);
+      ConfigParser;
 
-    return cfg.name();
+    // If we are running Cordova 5.4 or abova - use parser from cordova-common.
+    // Otherwise - from cordova-lib.
+    try {
+      ConfigParser = ctx.requireCordovaModule('cordova-common/src/ConfigParser/ConfigParser');
+    } catch (e) {
+      ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser')
+    }
+
+    return new ConfigParser(xml).name();
   }
 
   /**
@@ -247,7 +255,7 @@ Mainly, it has only two method: to activate and to deactivate swift support in t
       buildSettings = configurations[config].buildSettings;
       buildSettings['EMBEDDED_CONTENT_CONTAINS_SWIFT'] = "NO";
     }
-    
+
     logger.info('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as: NO');
   }
 

@@ -50,14 +50,21 @@ We will use it to inject plugin-specific options.
    *
    * @return {String} name of the project
    */
-  function getProjectName(ctx, projectRoot) {
-    var cordova_util = ctx.requireCordovaModule('cordova-lib/src/cordova/util'),
-      ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser'),
-      xml = cordova_util.projectConfig(projectRoot),
-      cfg = new ConfigParser(xml);
+   function getProjectName(ctx, projectRoot) {
+     var cordova_util = ctx.requireCordovaModule('cordova-lib/src/cordova/util'),
+       xml = cordova_util.projectConfig(projectRoot),
+       ConfigParser;
 
-    return cfg.name();
-  }
+     // If we are running Cordova 5.4 or abova - use parser from cordova-common.
+     // Otherwise - from cordova-lib.
+     try {
+       ConfigParser = ctx.requireCordovaModule('cordova-common/src/ConfigParser/ConfigParser');
+     } catch (e) {
+       ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser')
+     }
+
+     return new ConfigParser(xml).name();
+   }
 
   /**
    * Get path to config.xml inside iOS project.
