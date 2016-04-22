@@ -24,14 +24,16 @@
 
 import Foundation
 
-protocol ClientOption: CustomStringConvertible, Hashable {
-    func getSocketIOOptionValue() -> AnyObject?
+protocol ClientOption : CustomStringConvertible, Hashable {
+    func getSocketIOOptionValue() -> AnyObject
 }
 
-public enum SocketIOClientOption: ClientOption {
+public enum SocketIOClientOption : ClientOption {
     case ConnectParams([String: AnyObject])
     case Cookies([NSHTTPCookie])
+    case DoubleEncodeUTF8(Bool)
     case ExtraHeaders([String: String])
+    case ForceNew(Bool)
     case ForcePolling(Bool)
     case ForceWebsockets(Bool)
     case HandleQueue(dispatch_queue_t)
@@ -43,62 +45,106 @@ public enum SocketIOClientOption: ClientOption {
     case ReconnectAttempts(Int)
     case ReconnectWait(Int)
     case Secure(Bool)
+    case SelfSigned(Bool)
     case SessionDelegate(NSURLSessionDelegate)
     case VoipEnabled(Bool)
     
     public var description: String {
-        if let label = Mirror(reflecting: self).children.first?.label {
-            return String(label[label.startIndex]).lowercaseString + String(label.characters.dropFirst())
-        } else {
-            return ""
+        let description: String
+        
+        switch self {
+        case .ConnectParams:
+            description = "connectParams"
+        case .Cookies:
+            description = "cookies"
+        case .DoubleEncodeUTF8:
+            description = "doubleEncodeUTF8"
+        case .ExtraHeaders:
+            description = "extraHeaders"
+        case .ForceNew:
+            description = "forceNew"
+        case .ForcePolling:
+            description = "forcePolling"
+        case .ForceWebsockets:
+            description = "forceWebsockets"
+        case .HandleQueue:
+            description = "handleQueue"
+        case .Log:
+            description = "log"
+        case .Logger:
+            description = "logger"
+        case .Nsp:
+            description = "nsp"
+        case .Path:
+            description = "path"
+        case .Reconnects:
+            description = "reconnects"
+        case .ReconnectAttempts:
+            description = "reconnectAttempts"
+        case .ReconnectWait:
+            description = "reconnectWait"
+        case .Secure:
+            description = "secure"
+        case .SelfSigned:
+            description = "selfSigned"
+        case .SessionDelegate:
+            description = "sessionDelegate"
+        case .VoipEnabled:
+            description = "voipEnabled"
         }
+        
+        return description
     }
     
     public var hashValue: Int {
         return description.hashValue
     }
     
-    static func keyValueToSocketIOClientOption(key: String, value: AnyObject) -> SocketIOClientOption? {
-        switch key {
-        case "connectParams" where value is [String: AnyObject]:
-            return .ConnectParams(value as! [String: AnyObject])
-        case "reconnects" where value is Bool:
-            return .Reconnects(value as! Bool)
-        case "reconnectAttempts" where value is Int:
-            return .ReconnectAttempts(value as! Int)
-        case "reconnectWait" where value is Int:
-            return .ReconnectWait(value as! Int)
-        case "forcePolling" where value is Bool:
-            return .ForcePolling(value as! Bool)
-        case "forceWebsockets" where value is Bool:
-            return .ForceWebsockets(value as! Bool)
-        case "nsp" where value is String:
-            return .Nsp(value as! String)
-        case "cookies" where value is [NSHTTPCookie]:
-            return .Cookies(value as! [NSHTTPCookie])
-        case "log" where value is Bool:
-            return .Log(value as! Bool)
-        case "logger" where value is SocketLogger:
-            return .Logger(value as! SocketLogger)
-        case "sessionDelegate" where value is NSURLSessionDelegate:
-            return .SessionDelegate(value as! NSURLSessionDelegate)
-        case "path" where value is String:
-            return .Path(value as! String)
-        case "extraHeaders" where value is [String: String]:
-            return .ExtraHeaders(value as! [String: String])
-        case "handleQueue" where value is dispatch_queue_t:
-            return .HandleQueue(value as! dispatch_queue_t)
-        case "voipEnabled" where value is Bool:
-            return .VoipEnabled(value as! Bool)
-        case "secure" where value is Bool:
-            return .Secure(value as! Bool)
-        default:
-            return nil
+    func getSocketIOOptionValue() -> AnyObject {
+        let value: AnyObject
+        
+        switch self {
+        case let .ConnectParams(params):
+            value = params
+        case let .Cookies(cookies):
+            value = cookies
+        case let .DoubleEncodeUTF8(encode):
+            value = encode
+        case let .ExtraHeaders(headers):
+            value = headers
+        case let .ForceNew(force):
+            value = force
+        case let .ForcePolling(force):
+            value = force
+        case let .ForceWebsockets(force):
+            value = force
+        case let .HandleQueue(queue):
+            value = queue
+        case let .Log(log):
+            value = log
+        case let .Logger(logger):
+            value = logger
+        case let .Nsp(nsp):
+            value = nsp
+        case let .Path(path):
+            value = path
+        case let .Reconnects(reconnects):
+            value = reconnects
+        case let .ReconnectAttempts(attempts):
+            value = attempts
+        case let .ReconnectWait(wait):
+            value = wait
+        case let .Secure(secure):
+            value = secure
+        case let .SelfSigned(signed):
+            value = signed
+        case let .SessionDelegate(delegate):
+            value = delegate
+        case let .VoipEnabled(enabled):
+            value = enabled
         }
-    }
-    
-    func getSocketIOOptionValue() -> AnyObject? {
-       return Mirror(reflecting: self).children.first?.value as? AnyObject
+        
+        return value
     }
 }
 
@@ -106,36 +152,67 @@ public func ==(lhs: SocketIOClientOption, rhs: SocketIOClientOption) -> Bool {
     return lhs.description == rhs.description
 }
 
-extension Set where Element: ClientOption {
+extension Set where Element : ClientOption {
     mutating func insertIgnore(element: Element) {
-        let (insertType, _) = Mirror(reflecting: element).children.first!
-        for item in self {
-            let (name, _) = Mirror(reflecting: item).children.first!
-            if insertType == name {
-                return
-            }
+        if !contains(element) {
+            insert(element)
         }
-        
-        self.insert(element)
+    }
+}
+
+extension NSDictionary {
+    private static func keyValueToSocketIOClientOption(key: String, value: AnyObject) -> SocketIOClientOption? {
+        switch (key, value) {
+        case let ("connectParams", params as [String: AnyObject]):
+            return .ConnectParams(params)
+        case let ("cookies", cookies as [NSHTTPCookie]):
+            return .Cookies(cookies)
+        case let ("doubleEncodeUTF8", encode as Bool):
+            return .DoubleEncodeUTF8(encode)
+        case let ("extraHeaders", headers as [String: String]):
+            return .ExtraHeaders(headers)
+        case let ("forceNew", force as Bool):
+            return .ForceNew(force)
+        case let ("forcePolling", force as Bool):
+            return .ForcePolling(force)
+        case let ("forceWebsockets", force as Bool):
+            return .ForceWebsockets(force)
+        case let ("handleQueue", queue as dispatch_queue_t):
+            return .HandleQueue(queue)
+        case let ("log", log as Bool):
+            return .Log(log)
+        case let ("logger", logger as SocketLogger):
+            return .Logger(logger)
+        case let ("nsp", nsp as String):
+            return .Nsp(nsp)
+        case let ("path", path as String):
+            return .Path(path)
+        case let ("reconnects", reconnects as Bool):
+            return .Reconnects(reconnects)
+        case let ("reconnectAttempts", attempts as Int):
+            return .ReconnectAttempts(attempts)
+        case let ("reconnectWait", wait as Int):
+            return .ReconnectWait(wait)
+        case let ("secure", secure as Bool):
+            return .Secure(secure)
+        case let ("selfSigned", selfSigned as Bool):
+            return .SelfSigned(selfSigned)
+        case let ("sessionDelegate", delegate as NSURLSessionDelegate):
+            return .SessionDelegate(delegate)
+        case let ("voipEnabled", enable as Bool):
+            return .VoipEnabled(enable)
+        default:
+            return nil
+        }
     }
     
-    static func NSDictionaryToSocketOptionsSet(dict: NSDictionary) -> Set<SocketIOClientOption> {
+    func toSocketOptionsSet() -> Set<SocketIOClientOption> {
         var options = Set<SocketIOClientOption>()
         
-        for (rawKey, value) in dict {
-            if let key = rawKey as? String, opt = SocketIOClientOption.keyValueToSocketIOClientOption(key, value: value) {
-                options.insert(opt)
+        for (rawKey, value) in self {
+            if let key = rawKey as? String, opt = NSDictionary.keyValueToSocketIOClientOption(key, value: value) {
+                options.insertIgnore(opt)
             }
-        }
-        
-        return options
-    }
-    
-    func SocketOptionsSetToNSDictionary() -> NSDictionary {
-        let options = NSMutableDictionary()
-        
-        for option in self {
-            options[option.description] = option.getSocketIOOptionValue()
         }
         
         return options

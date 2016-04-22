@@ -26,17 +26,89 @@
 import Foundation
 
 @objc public protocol SocketEngineSpec {
-    weak var client: SocketEngineClient? {get set}
-    var cookies: [NSHTTPCookie]? {get}
-    var sid: String {get}
-    var socketPath: String {get}
-    var urlPolling: String {get}
-    var urlWebSocket: String {get}
+    weak var client: SocketEngineClient? { get set }
+    var closed: Bool { get }
+    var connected: Bool { get }
+    var connectParams: [String: AnyObject]? { get set }
+    var doubleEncodeUTF8: Bool { get }
+    var cookies: [NSHTTPCookie]? { get }
+    var extraHeaders: [String: String]? { get }
+    var fastUpgrade: Bool { get }
+    var forcePolling: Bool { get }
+    var forceWebsockets: Bool { get }
+    var parseQueue: dispatch_queue_t! { get }
+    var polling: Bool { get }
+    var probing: Bool { get }
+    var emitQueue: dispatch_queue_t! { get }
+    var handleQueue: dispatch_queue_t! { get }
+    var sid: String { get }
+    var socketPath: String { get }
+    var urlPolling: NSURL { get }
+    var urlWebSocket: NSURL { get }
+    var websocket: Bool { get }
     
-    init(client: SocketEngineClient, url: String, options: NSDictionary?)
+    init(client: SocketEngineClient, url: NSURL, options: NSDictionary?)
     
-    func close()
-    func open(opts: [String: AnyObject]?)
-    func send(msg: String, withData datas: [NSData]?)
-    func write(msg: String, withType type: SocketEnginePacketType, withData data: [NSData]?)
+    func connect()
+    func didError(error: String)
+    func disconnect(reason: String)
+    func doFastUpgrade()
+    func flushWaitingForPostToWebSocket()
+    func parseEngineData(data: NSData)
+    func parseEngineMessage(message: String, fromPolling: Bool)
+    func write(msg: String, withType type: SocketEnginePacketType, withData data: [NSData])
+}
+
+extension SocketEngineSpec {
+    var urlPollingWithSid: NSURL {
+        let com = NSURLComponents(URL: urlPolling, resolvingAgainstBaseURL: false)!
+        com.query = com.query! + "&sid=\(sid)"
+        
+        return com.URL!
+    }
+    
+    var urlWebSocketWithSid: NSURL {
+        let com = NSURLComponents(URL: urlWebSocket, resolvingAgainstBaseURL: false)!
+        com.query = com.query! + (sid == "" ? "" : "&sid=\(sid)")
+        
+        return com.URL!
+    }
+    
+    func createBinaryDataForSend(data: NSData) -> Either<NSData, String> {
+        if websocket {
+            var byteArray = [UInt8](count: 1, repeatedValue: 0x4)
+            let mutData = NSMutableData(bytes: &byteArray, length: 1)
+            
+            mutData.appendData(data)
+            
+            return .Left(mutData)
+        } else {
+            let str = "b4" + data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
+            
+            return .Right(str)
+        }
+    }
+    
+    func doubleEncodeUTF8(string: String) -> String {
+        if let latin1 = string.dataUsingEncoding(NSUTF8StringEncoding),
+            utf8 = NSString(data: latin1, encoding: NSISOLatin1StringEncoding) {
+                return utf8 as String
+        } else {
+            return string
+        }
+    }
+    
+    func fixDoubleUTF8(string: String) -> String {
+        if let utf8 = string.dataUsingEncoding(NSISOLatin1StringEncoding),
+            latin1 = NSString(data: utf8, encoding: NSUTF8StringEncoding) {
+                return latin1 as String
+        } else {
+            return string
+        }
+    }
+    
+    /// Send an engine message (4)
+    func send(msg: String, withData datas: [NSData]) {
+        write(msg, withType: .Message, withData: datas)
+    }
 }

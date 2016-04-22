@@ -1,8 +1,8 @@
 //
-//  SocketFixUTF8.swift
+//  SocketClientSpec.swift
 //  Socket.IO-Client-Swift
 //
-//  Created by Erik Little on 3/16/15.
+//  Created by Erik Little on 1/3/16.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -21,20 +21,23 @@
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
-//
 
-import Foundation
-
-func fixDoubleUTF8(inout name: String) {
-    if let utf8 = name.dataUsingEncoding(NSISOLatin1StringEncoding),
-        latin1 = NSString(data: utf8, encoding: NSUTF8StringEncoding) {
-            name = latin1 as String
-    }
+protocol SocketClientSpec : class {
+    var nsp: String { get set }
+    var waitingPackets: [SocketPacket] { get set }
+    
+    func didConnect()
+    func didDisconnect(reason: String)
+    func didError(reason: String)
+    func handleAck(ack: Int, data: [AnyObject])
+    func handleEvent(event: String, data: [AnyObject], isInternalMessage: Bool, withAck ack: Int)
+    func joinNamespace(namespace: String)
 }
 
-func doubleEncodeUTF8(inout str: String) {
-    if let latin1 = str.dataUsingEncoding(NSUTF8StringEncoding),
-        utf8 = NSString(data: latin1, encoding: NSISOLatin1StringEncoding) {
-            str = utf8 as String
+extension SocketClientSpec {
+    func didError(reason: String) {
+        DefaultSocketLogger.Logger.error("%@", type: "SocketIOClient", args: reason)
+        
+        handleEvent("error", data: [reason], isInternalMessage: true, withAck: -1)
     }
 }
