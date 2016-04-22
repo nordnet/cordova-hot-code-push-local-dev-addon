@@ -88,7 +88,8 @@ static NSString *const HOT_CODE_PUSH_PLUGIN = @"HCPPlugin";
     }
     
     @try {
-        _socketIOClient = [[SocketIOClient alloc] initWithSocketURL:devServerURL options:nil];
+        _socketIOClient = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:devServerURL]
+                                                            options:nil];
         
         [_socketIOClient on:@"connect" callback:^(NSArray * _Nonnull data, SocketAckEmitter * _Nullable emitter) {
             NSLog(@"socket connected");
@@ -97,8 +98,6 @@ static NSString *const HOT_CODE_PUSH_PLUGIN = @"HCPPlugin";
             _updateRequested = YES;
             [self fetchUpdate];
         }];
-        
-        
         
         [_socketIOClient on:@"disconnect" callback:^(NSArray * _Nonnull data, SocketAckEmitter * _Nullable emitter) {
             NSLog(@"socket disconnected");
@@ -115,7 +114,7 @@ static NSString *const HOT_CODE_PUSH_PLUGIN = @"HCPPlugin";
         return;
     }
     
-    [_socketIOClient close];
+    [_socketIOClient disconnect];
     [_socketIOClient removeAllHandlers];
     _socketIOClient = nil;
 }
