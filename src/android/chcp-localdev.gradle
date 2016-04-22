@@ -8,6 +8,6 @@ cdvPluginPostBuildExtras.add({
     }
 
     dependencies {
-        compile 'io.socket:socket.io-client:0.6.2'
+        compile 'io.socket:socket.io-client:0.7.0'
     }
 });
