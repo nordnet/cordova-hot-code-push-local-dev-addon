@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin id="cordova-hot-code-push-local-dev-addon" version="0.1.2" xmlns="http://apache.org/cordova/ns/plugins/1.0">
+<plugin id="cordova-hot-code-push-local-dev-addon" version="0.2.0" xmlns="http://apache.org/cordova/ns/plugins/1.0">
 
   <name>Hot Code Push Local Development Addon</name>
   <description>Cordova plugin that add's local development feature to the Hot Code Push plugin</description>
