@@ -6,7 +6,6 @@ We will use it to inject plugin-specific options.
 
   var path = require('path'),
     xmlHelper = require('./xmlHelper.js'),
-    logger = require('./logger.js'),
     cordovaContext,
     projectRoot,
     platforms;
@@ -50,21 +49,21 @@ We will use it to inject plugin-specific options.
    *
    * @return {String} name of the project
    */
-   function getProjectName(ctx, projectRoot) {
-     var cordova_util = ctx.requireCordovaModule('cordova-lib/src/cordova/util'),
-       xml = cordova_util.projectConfig(projectRoot),
-       ConfigParser;
+  function getProjectName(ctx, projectRoot) {
+    var cordova_util = ctx.requireCordovaModule('cordova-lib/src/cordova/util'),
+      xml = cordova_util.projectConfig(projectRoot),
+      ConfigParser;
 
-     // If we are running Cordova 5.4 or abova - use parser from cordova-common.
-     // Otherwise - from cordova-lib.
-     try {
-       ConfigParser = ctx.requireCordovaModule('cordova-common/src/ConfigParser/ConfigParser');
-     } catch (e) {
-       ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser')
-     }
+    // If we are running Cordova 5.4 or abova - use parser from cordova-common.
+    // Otherwise - from cordova-lib.
+    try {
+      ConfigParser = ctx.requireCordovaModule('cordova-common/src/ConfigParser/ConfigParser');
+    } catch (e) {
+      ConfigParser = ctx.requireCordovaModule('cordova-lib/src/configparser/ConfigParser')
+    }
 
-     return new ConfigParser(xml).name();
-   }
+    return new ConfigParser(xml).name();
+  }
 
   /**
    * Get path to config.xml inside iOS project.
@@ -125,63 +124,34 @@ We will use it to inject plugin-specific options.
       // read data from config.xml
       var configData = xmlHelper.readXmlAsJson(configXmlFilePath);
       if (configData == null) {
-        logger.error('Configuration file ' + configXmlFilePath + ' not found');
+        console.warn('Configuration file ' + configXmlFilePath + ' not found');
         return;
       }
 
-      // if config.xml already has chcp preferences - read them
-      var chcpConfig = {};
-      if (configData.widget.hasOwnProperty('chcp') && configData.widget.chcp.lenght > 0) {
-        chcpConfig = configData.widget.chcp[0];
-      } else {
-        configData.widget['chcp'] = [];
+      // inject new options
+      var chcpXmlConfig = {};
+      for (var preferenceName in options) {
+        injectPreference(chcpXmlConfig, preferenceName, options[preferenceName]);
       }
 
-      // inject new options
-      injectConfigUrl(chcpConfig, options);
-      injectLocalDevOptions(chcpConfig, options);
-
       // write them back to config.xml
-      configData.widget.chcp[0] = chcpConfig;
+      configData.widget['chcp'] = [];
+      configData.widget.chcp.push(chcpXmlConfig);
       xmlHelper.writeJsonAsXml(configData, configXmlFilePath);
     });
   }
 
   /**
-   * Inject config-file preference if any is set in provided options.
+   * Inject preference into xml.
    *
-   * @param {Object} xml - config.xml data
-   * @param {Object} options - plugin options to inject
+   * @param {Object} xml - current xml preferences for the plugin
+   * @param {String} preferenceName - preference name
+   * @param {Object} preferenceAttributes - preference attributes
    */
-  function injectConfigUrl(xml, options) {
-    if (!options.hasOwnProperty('config-file')) {
-      return;
-    }
-
-    xml['config-file'] = [{
-      '$': {
-        'url': options['config-file']
-      }
+  function injectPreference(xml, preferenceName, preferenceAttributes) {
+    xml[preferenceName] = [{
+      '$': preferenceAttributes
     }];
-  }
-
-  /**
-   * Inject local-development options if any is set in provided options.
-   *
-   * @param {Object} xml - config.xml data
-   * @param {Object} options - plugin options to inject
-   */
-  function injectLocalDevOptions(xml, options) {
-    if (!options.hasOwnProperty('local-development')) {
-      return;
-    }
-
-    var localDevBlock = {};
-    localDevBlock['$'] = {
-      enabled: options['local-development'].enabled
-    };
-
-    xml['local-development'] = [localDevBlock];
   }
 
   // endregion

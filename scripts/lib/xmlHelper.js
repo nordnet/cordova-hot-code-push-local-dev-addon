@@ -4,8 +4,8 @@ Small helper class to read/write from/to xml file.
 (function() {
 
   var fs = require('fs'),
-    xml2js = require('xml2js'),
-    logger = require('./logger.js');
+    xml2jsProcessors = require('xml2js/lib/processors'),
+    xml2js = require('xml2js');
 
   module.exports = {
     readXmlAsJson: readXmlAsJson,
@@ -16,16 +16,27 @@ Small helper class to read/write from/to xml file.
    * Read data from the xml file as JSON object.
    *
    * @param {String} filePath - absolute path to xml file
+   * @param {Boolean} simplify - if set to true - cleanup resulting json
    * @return {Object} JSON object with the contents of the xml file
    */
-  function readXmlAsJson(filePath) {
+  function readXmlAsJson(filePath, simplify) {
     var xmlData,
       xmlParser,
-      parsedData;
+      parsedData,
+      parserOptions = {};
 
+    if (simplify) {
+      parserOptions = {
+          attrValueProcessors: [xml2jsProcessors.parseNumbers, xml2jsProcessors.parseBooleans],
+          explicitArray: false,
+          mergeAttrs: true,
+          explicitRoot: false
+      };
+    }
+
+    xmlParser = new xml2js.Parser(parserOptions);
     try {
       xmlData = fs.readFileSync(filePath);
-      xmlParser = new xml2js.Parser();
       xmlParser.parseString(xmlData, function(err, data) {
         if (data) {
           parsedData = data;
@@ -52,7 +63,7 @@ Small helper class to read/write from/to xml file.
     try {
       fs.writeFileSync(filePath, changedXmlData);
     } catch (err) {
-      logger.error(err);
+      console.log(err);
       isSaved = false;
     }
 

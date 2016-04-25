@@ -71,7 +71,7 @@ function isExecutionAllowed(ctx, pluginPreferences) {
     return false;
   }
 
-  if (!pluginPreferences['local-development'].enabled) {
+  if (pluginPreferences['local-development'] && !pluginPreferences['local-development'].enabled) {
     logger.info('Local development mode for CHCP plugin is disabled. Doing nothing.');
     return false;
   }
@@ -131,7 +131,7 @@ module.exports = function(ctx) {
     return;
   }
 
-  if (pluginPreferences['config-file'].length == 0) {
+  if (!pluginPreferences['config-file'] || !pluginPreferences['config-file']['url'].length) {
     logger.info('Config-file is not set, local-development mode is enabled by default.');
   }
 
@@ -143,7 +143,9 @@ module.exports = function(ctx) {
 
   logger.info('Setting config-file to local server: ' + localServerURL);
 
-  pluginPreferences['config-file'] = localServerURL;
+  pluginPreferences['config-file'] = {
+    'url': localServerURL
+  };
   chcpConfigXmlWriter.writeOptions(ctx, pluginPreferences);
 
   buildVersionUpdater.increaseBuildVersion(ctx);
