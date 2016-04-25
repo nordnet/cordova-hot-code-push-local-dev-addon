@@ -131,6 +131,13 @@ module.exports = function(ctx) {
     return;
   }
 
+  // activate dev mode by default
+  if (!pluginPreferences['local-development']) {
+    pluginPreferences['local-development'] = {
+      'enabled': true
+    };
+  }
+
   if (!pluginPreferences['config-file'] || !pluginPreferences['config-file']['url'].length) {
     logger.info('Config-file is not set, local-development mode is enabled by default.');
   }
