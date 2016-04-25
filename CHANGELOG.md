@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.2.1 (2016-04-25)
+
+**Bug fixes:**
+
+- Fixed [issue #7](https://github.com/nordnet/cordova-hot-code-push-local-dev-addon/issues/7). `<native-interface />` property is now preserved.
+- Fixed typo in `before_plugin_install` hook. If installation has failed - it will show the correct error message.
+
 ## 0.2.0 (2016-04-22)
 
 **Enhancements:**
