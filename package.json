@@ -1,6 +1,6 @@
 {
   "name": "cordova-hot-code-push-local-dev-addon",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Cordova plugin that add's local development feature to the Hot Code Push plugin",
   "cordova": {
     "id": "cordova-hot-code-push-local-dev-addon",
