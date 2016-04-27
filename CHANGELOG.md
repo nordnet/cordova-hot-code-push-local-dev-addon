@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.2.2 (2016-04-27)
+
+**Bug fixes:**
+
+- Fixed installation failure on Windows.
+
 ## 0.2.1 (2016-04-25)
 
 **Bug fixes:**
