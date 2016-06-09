@@ -44,6 +44,9 @@ function isChcpPluginInstalled(ctx) {
  */
 function isBuildingForRelease(ctx) {
   var consoleOptions = ctx.opts.options;
+  if (consoleOptions.release) {
+    return true;
+  }
   for (var idx in consoleOptions) {
     if (consoleOptions[idx] === RELEASE_BUILD_FLAG) {
       return true;
