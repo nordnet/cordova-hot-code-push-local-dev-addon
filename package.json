@@ -39,9 +39,9 @@
     }
   ],
   "dependencies": {
-    "xml2js": ">=0.4",
-    "plist": ">=1.1.0",
-    "colors": ">=1.1.2"
+    "xml2js": "^0.4.17",
+    "plist": "^2.0.1",
+    "colors": "^1.1.2"
   },
   "author": "Nikolay Demyankov for Nordnet Bank AB",
   "license": "MIT",
