@@ -88,8 +88,7 @@ static NSString *const HOT_CODE_PUSH_PLUGIN = @"HCPPlugin";
     }
     
     @try {
-        _socketIOClient = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:devServerURL]
-                                                            options:nil];
+        _socketIOClient = [[SocketIOClient alloc] initWithSocketURL:[NSURL URLWithString:devServerURL] config:nil];
         
         [_socketIOClient on:@"connect" callback:^(NSArray * _Nonnull data, SocketAckEmitter * _Nullable emitter) {
             NSLog(@"socket connected");
