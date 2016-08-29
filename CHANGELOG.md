@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.3.0 (2016-08-29)
+
+**Bug fixes:**
+
+- Fixed [issue #12](https://github.com/nordnet/cordova-hot-code-push-local-dev-addon/issues/12). Problem was with how `plist` is parsed and saved.
+
+**Enhancements:**
+
+- Updated socket.io library for iOS to v7.0.3.
+
 ## 0.2.2 (2016-04-27)
 
 **Bug fixes:**
