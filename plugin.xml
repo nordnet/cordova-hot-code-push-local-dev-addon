@@ -60,7 +60,7 @@
     <source-file src="src/ios/SocketIOClientSwift/SocketAckEmitter.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketAckManager.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketAnyEvent.swift" target-dir="SocketIOClientSwift/"/>
-    <source-file src="src/ios/SocketIOClientSwift/SocketClientSpec.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketClientManager.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketEngine.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketEngineClient.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketEnginePacketType.swift" target-dir="SocketIOClientSwift/"/>
@@ -68,15 +68,18 @@
     <source-file src="src/ios/SocketIOClientSwift/SocketEngineSpec.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketEngineWebsocket.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketEventHandler.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketExtensions.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketIOClient.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketIOClientConfiguration.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketIOClientOption.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SocketIOClientSpec.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketIOClientStatus.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketLogger.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketPacket.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketParsable.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketStringReader.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/SocketTypes.swift" target-dir="SocketIOClientSwift/"/>
-    <source-file src="src/ios/SocketIOClientSwift/SwiftRegex.swift" target-dir="SocketIOClientSwift/"/>
+    <source-file src="src/ios/SocketIOClientSwift/SSLSecurity.swift" target-dir="SocketIOClientSwift/"/>
     <source-file src="src/ios/SocketIOClientSwift/WebSocket.swift" target-dir="SocketIOClientSwift/"/>
 
   </platform>

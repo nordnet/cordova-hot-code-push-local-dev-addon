@@ -59,6 +59,8 @@ extension SocketEnginePollable {
     }
     
     func createRequestForPostWithPostWait() -> NSURLRequest {
+        defer { postWait.removeAll(keepCapacity: true) }
+
         var postStr = ""
         
         for packet in postWait {
@@ -69,18 +71,13 @@ extension SocketEnginePollable {
         
         DefaultSocketLogger.Logger.log("Created POST string: %@", type: "SocketEnginePolling", args: postStr)
         
-        postWait.removeAll(keepCapacity: false)
-        
         let req = NSMutableURLRequest(URL: urlPollingWithSid)
+        let postData = postStr.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         
         addHeaders(req)
         
         req.HTTPMethod = "POST"
         req.setValue("text/plain; charset=UTF-8", forHTTPHeaderField: "Content-Type")
-        
-        let postData = postStr.dataUsingEncoding(NSUTF8StringEncoding,
-            allowLossyConversion: false)!
-        
         req.HTTPBody = postData
         req.setValue(String(postData.length), forHTTPHeaderField: "Content-Length")
         
@@ -88,11 +85,10 @@ extension SocketEnginePollable {
     }
     
     public func doPoll() {
-        if websocket || waitingForPoll || !connected || closed {
-            return
-        }
+        if websocket || waitingForPoll || !connected || closed { return }
         
         waitingForPoll = true
+        
         let req = NSMutableURLRequest(URL: urlPollingWithSid)
         
         addHeaders(req)
@@ -101,7 +97,6 @@ extension SocketEnginePollable {
     
     func doRequest(req: NSURLRequest, withCallback callback: (NSData?, NSURLResponse?, NSError?) -> Void) {
         if !polling || closed || invalidated || fastUpgrade {
-            DefaultSocketLogger.Logger.error("Tried to do polling request when not supposed to", type: "SocketEnginePolling")
             return
         }
         
@@ -123,7 +118,7 @@ extension SocketEnginePollable {
                 
                 return
             }
-
+            
             DefaultSocketLogger.Logger.log("Got polling response", type: "SocketEnginePolling")
             
             if let str = String(data: data!, encoding: NSUTF8StringEncoding) {
@@ -181,9 +176,7 @@ extension SocketEnginePollable {
     }
     
     func parsePollingMessage(str: String) {
-        guard str.characters.count != 1 else {
-            return
-        }
+        guard str.characters.count != 1 else { return }
         
         var reader = SocketStringReader(message: str)
         
@@ -210,14 +203,12 @@ extension SocketEnginePollable {
         let fixedMessage: String
         
         if doubleEncodeUTF8 {
-           fixedMessage = doubleEncodeUTF8(message)
+            fixedMessage = doubleEncodeUTF8(message)
         } else {
             fixedMessage = message
         }
         
-        let strMsg = "\(type.rawValue)\(fixedMessage)"
-        
-        postWait.append(strMsg)
+        postWait.append(String(type.rawValue) + fixedMessage)
         
         for data in datas {
             if case let .Right(bin) = createBinaryDataForSend(data) {
