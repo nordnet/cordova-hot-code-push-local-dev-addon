@@ -4,7 +4,7 @@ This plugin adds local development feature to the [Hot Code Push plugin](https:/
 
 ## Supported platforms
 - Android 4.0.0 or above.
-- iOS 7.0 or above. Requires Xcode 7 and Swift 2.
+- iOS 8.0 or above. Requires Xcode 8.
 
 ## Documentation
 - [Installation](#installation)
@@ -17,7 +17,7 @@ This plugin adds local development feature to the [Hot Code Push plugin](https:/
 
 ### Installation
 
-This requires cordova 5.0+ (current stable 0.3.0):
+This requires cordova 5.0+ (current stable 0.4.0):
 
 ```sh
 cordova plugin add cordova-hot-code-push-local-dev-addon
@@ -26,6 +26,11 @@ cordova plugin add cordova-hot-code-push-local-dev-addon
 It is also possible to install via repo url directly (__unstable__):
 ```sh
 cordova plugin add https://github.com/nordnet/cordova-hot-code-push-local-dev-addon.git
+```
+
+Starting from `v0.4.0` this plugin **requires Xcode 8**. If you are using Xcode 7 - please, use `v0.3.0`:
+```sh
+cordova plugin add cordova-hot-code-push-local-dev-addon@0.3.0
 ```
 
 **Note:** you can install plugin to any project, but it is not gonna do anything without the [Hot Code Push plugin](https://github.com/nordnet/cordova-hot-code-push).

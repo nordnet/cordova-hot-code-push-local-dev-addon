@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.4.0 (2016-09-21)
+
+**Bug fixes:**
+
+- [Issue #13](https://github.com/nordnet/cordova-hot-code-push-local-dev-addon/issues/13). Project can now be build with Xcode 8. To run in Xcode 7 use v0.3.0.
+
 ## 0.3.0 (2016-08-29)
 
 **Bug fixes:**
