@@ -6,7 +6,7 @@ Mainly, it has only two method: to activate and to deactivate swift support in t
 var path = require('path');
 var fs = require('fs');
 var logger = require('./logger.js');
-var IOS_DEPLOYMENT_TARGET = '7.0';
+var IOS_DEPLOYMENT_TARGET = '8.0';
 var COMMENT_KEY = /_comment$/;
 var PLUGIN_NAME = 'cordova-hot-code-push-local-dev-addon';
 var PLUGIN_MAIN_HEADER = 'HCPLDPlugin.h';
@@ -150,15 +150,17 @@ function injectSwiftOptionsInProjectConfig(xcodeProject) {
     buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = IOS_DEPLOYMENT_TARGET;
     buildSettings['EMBEDDED_CONTENT_CONTAINS_SWIFT'] = "YES";
     buildSettings['LD_RUNPATH_SEARCH_PATHS'] = '"@executable_path/Frameworks"';
+    buildSettings['SWIFT_VERSION'] = '3.0';
 
     // if project module name is not defined - set it with value from build settings
     if ((!projectModuleName || projectModuleName.length == 0) && buildSettings['PRODUCT_NAME']) {
       setProjectModuleName(buildSettings['PRODUCT_NAME']);
     }
   }
-  logger.info('IOS project now has deployment target set to: ' + IOS_DEPLOYMENT_TARGET);
-  logger.info('IOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as: YES');
-  logger.info('IOS project Runpath Search Paths set to: @executable_path/Frameworks');
+  logger.info('iOS project now has deployment target set to: ' + IOS_DEPLOYMENT_TARGET);
+  logger.info('iOS project option EMBEDDED_CONTENT_CONTAINS_SWIFT set as: YES');
+  logger.info('iOS project Runpath Search Paths set to: @executable_path/Frameworks');
+  logger.info('iOS project "Use Legacy Swift Language Version" set to: NO');
 }
 
 /**
