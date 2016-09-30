@@ -4,7 +4,7 @@ This way we will forse main plugin to install www folder from the assets.
 Otherwise - it will use the cached version.
 */
 var path = require('path');
-var plist = require('plist');
+var plist = require('plist-native');
 var fs = require('fs');
 var xmlHelper = require('./xmlHelper.js');
 var logger = require('./logger.js');
@@ -103,10 +103,6 @@ function increaseBuildVersionForIos(cordovaContext, buildConfig) {
 
   plistContent['CFBundleVersion'] = newVersion.toString();
   plistContent['CFBundleShortVersionString'] = newVersion.toString();
-
-// bugfix in plist library: these should be empty values, but it sets NSMainNibFile=NSMainNibFile~ipad
-  plistContent['NSMainNibFile'] = '';
-  plistContent['NSMainNibFile~ipad'] = '';
 
   var isUpdated = updateIosPlist(cordovaContext, plistContent);
   if (isUpdated) {
