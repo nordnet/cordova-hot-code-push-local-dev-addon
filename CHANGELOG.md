@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.4.1 (2016-09-30)
+
+**Bug fixes:**
+
+- [Issue #14](https://github.com/nordnet/cordova-hot-code-push-local-dev-addon/issues/14). Fixed corruption of project's `.plist` file when used with some other plugins (i.e. `cordova-plugin-camera`).
+
 ## 0.4.0 (2016-09-21)
 
 **Bug fixes:**
