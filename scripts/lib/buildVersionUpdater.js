@@ -4,7 +4,7 @@ This way we will forse main plugin to install www folder from the assets.
 Otherwise - it will use the cached version.
 */
 var path = require('path');
-var plist = require('plist-native');
+var plist = require('simple-plist');
 var fs = require('fs');
 var xmlHelper = require('./xmlHelper.js');
 var logger = require('./logger.js');
@@ -141,8 +141,8 @@ function readIosPlist(cordovaContext) {
  * @return {Boolean} true - if content is saved; otherwise - false
  */
 function updateIosPlist(cordovaContext, plistContent) {
-  var newPlist = plist.build(plistContent),
-    pathToPlistFile = pathToIosPlistFile(cordovaContext);
+  var newPlist = plist.stringify(plistContent);
+  var pathToPlistFile = pathToIosPlistFile(cordovaContext);
 
   try {
     fs.writeFileSync(pathToPlistFile, newPlist, 'utf8');

@@ -40,8 +40,8 @@
   ],
   "dependencies": {
     "xml2js": "^0.4.17",
-    "plist-native": "^0.4.2",
-    "colors": "^1.1.2"
+    "colors": "^1.1.2",
+    "simple-plist": "^0.1.4"
   },
   "author": "Nikolay Demyankov for Nordnet Bank AB",
   "license": "MIT",
