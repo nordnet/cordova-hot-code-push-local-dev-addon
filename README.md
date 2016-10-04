@@ -17,7 +17,7 @@ This plugin adds local development feature to the [Hot Code Push plugin](https:/
 
 ### Installation
 
-This requires cordova 5.0+ (current stable 0.4.1):
+This requires cordova 5.0+ (current stable 0.4.2):
 
 ```sh
 cordova plugin add cordova-hot-code-push-local-dev-addon
