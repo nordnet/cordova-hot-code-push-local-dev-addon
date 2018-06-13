@@ -7,7 +7,7 @@ local development mode. And that library is written in Swift.
 var swiftHelper = require('./lib/swiftHelper.js'),
   logger = require('./lib/logger.js');
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   logger.header('Swift support activation hook:');
   swiftHelper.activate(ctx);
 };
