@@ -1,3 +1,7 @@
+# THIS PROJECT IS DEPRECATED
+
+We are not using this repo anymore, and we lack the manpower and the experience needed to maintain it. We are aware of the inconveniece that this may cause you. Feel free to use it as is, or create your own fork. See https://github.com/nordnet/cordova-hot-code-push-local-dev-addon/issues/29 for more information.
+
 # Cordova Hot Code Push Local Development Add-on
 
 This plugin adds local development feature to the [Hot Code Push plugin](https://github.com/nordnet/cordova-hot-code-push). With it you can develop your app and see the result immediately on the device. No need to restart it on every change you make in your web files: all the updates are uploaded automatically.
